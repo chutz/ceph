@@ -479,12 +479,14 @@ namespace rgw {
     const string& ldap_searchfilter = store->ctx()->_conf->rgw_ldap_searchfilter;
     const string& ldap_dnattr =
       store->ctx()->_conf->rgw_ldap_dnattr;
+#ifdef HAVE_OPENLDAP
     std::string ldap_bindpw = parse_rgw_ldap_bindpw(store->ctx());
 
     ldh = new rgw::LDAPHelper(ldap_uri, ldap_binddn, ldap_bindpw.c_str(),
 			      ldap_searchdn, ldap_searchfilter, ldap_dnattr);
     ldh->init();
     ldh->bind();
+#endif /* HAVE_OPENLDAP */
 
     rgw_user_init(store);
     rgw_bucket_init(store->meta_mgr);
@@ -524,7 +526,9 @@ namespace rgw {
 
     delete fe;
     delete fec;
+#ifdef HAVE_OPENLDAP
     delete ldh;
+#endif /* HAVE_OPENLDAP */
 
     rgw_log_usage_finalize();
 
